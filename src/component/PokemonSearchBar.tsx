@@ -1,36 +1,52 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { pokemons } from "../api/index";
+import { PokemonListItem } from "../types";
 
-interface Pokemon {
-  name: string;
-  url: string; // URL contains the Pokémon's ID
-}
+const inMemoryCache: { [key: string]: PokemonListItem[] } = {};
 
 const PokemonSearchBar: React.FC = () => {
-  const [searchTerm, setSearchTerm] = useState("");
-  const [suggestions, setSuggestions] = useState<Pokemon[]>([]);
-  const [loading, setLoading] = useState(false);
+  const [searchTerm, setSearchTerm] = useState<string>("");
+  const [suggestions, setSuggestions] = useState<PokemonListItem[]>([]);
+  const [loading, setLoading] = useState<boolean>(false);
 
-  // Fetch Pokémon by name and limit the suggestions to 10
   const handleSearch = async (name: string) => {
     setLoading(true);
-    try {
-      const response = await pokemons.getList(0, 1000); // Fetch up to 1000 Pokémon
-      const filteredPokemons = response.data.results
-        .filter((pokemon: Pokemon) =>
-          pokemon.name.toLowerCase().startsWith(name.toLowerCase())
-        )
-        .slice(0, 10); // Limit suggestions to 10
-      setSuggestions(filteredPokemons);
-    } catch (error) {
-      console.error("Error fetching Pokémon suggestions:", error);
-    } finally {
+    const cacheKey = `pokemon_list_all`;
+
+    const cachedPokemonList = inMemoryCache[cacheKey];
+
+    if (cachedPokemonList) {
+      console.log(`Using cached Pokémon list for search`);
+      filterAndSetSuggestions(cachedPokemonList, name);
       setLoading(false);
+    } else {
+      console.log(`Making API call to fetch Pokémon list for search`);
+      try {
+        const response = await pokemons.getList(0, 1000);
+        const allPokemonList = response.results;
+        inMemoryCache[cacheKey] = allPokemonList;
+        filterAndSetSuggestions(allPokemonList, name);
+      } catch (error) {
+        console.error("Error fetching Pokémon suggestions:", error);
+      } finally {
+        setLoading(false);
+      }
     }
   };
 
-  // Handle input change and trigger search
+  const filterAndSetSuggestions = (
+    pokemonList: PokemonListItem[],
+    name: string
+  ) => {
+    const filteredPokemons = pokemonList
+      .filter((pokemon) =>
+        pokemon.name.toLowerCase().startsWith(name.toLowerCase())
+      )
+      .slice(0, 10);
+    setSuggestions(filteredPokemons);
+  };
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setSearchTerm(value);
@@ -42,10 +58,9 @@ const PokemonSearchBar: React.FC = () => {
     }
   };
 
-  // Extract Pokémon ID from the URL
   const getPokemonIdFromUrl = (url: string): number => {
     const parts = url.split("/");
-    return parseInt(parts[parts.length - 2]); // The ID is the second last part of the URL
+    return parseInt(parts[parts.length - 2]);
   };
 
   return (
@@ -60,13 +75,12 @@ const PokemonSearchBar: React.FC = () => {
       {suggestions.length > 0 && (
         <ul className="absolute left-0 right-0 bg-white border border-gray-300 mt-1 rounded-lg shadow-lg z-10">
           {suggestions.map((pokemon) => {
-            const pokemonId = getPokemonIdFromUrl(pokemon.url); // Extract ID from URL
+            const pokemonId = getPokemonIdFromUrl(pokemon.url);
             return (
               <li
                 key={pokemonId}
                 className="p-2 hover:bg-gray-100 flex items-center"
               >
-                {/* Display Pokémon sprite using the correct ID */}
                 <img
                   src={`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${pokemonId}.png`}
                   alt={pokemon.name}
