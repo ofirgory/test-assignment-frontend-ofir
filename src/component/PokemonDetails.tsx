@@ -102,14 +102,14 @@ const PokemonDetails: React.FC = () => {
               ))}
             </div>
 
-            <div className="mt-4">
+            <dt className="mt-4">
               <strong>Stats:</strong>
               {pokemon.stats.map((statObj, index) => (
                 <p key={index} className="mt-2">
                   <strong>{statObj.stat.name}:</strong> {statObj.base_stat}
                 </p>
               ))}
-            </div>
+            </dt>
           </div>
         </div>
       </div>
