@@ -8,6 +8,7 @@ const inMemoryCache: { [key: string]: PokemonDetailsType } = {};
 
 const PokemonDetails: React.FC = () => {
   const { id } = useParams<{ id: string }>();
+
   const location = useLocation();
   const fromPage = location.state?.fromPage || 1;
 
@@ -59,6 +60,7 @@ const PokemonDetails: React.FC = () => {
           <FaHome className="text-4xl text-blue-500 hover:text-blue-600 transition duration-300" />
         </Link>
       </div>
+
       <div className="flex justify-center">
         <div className="bg-gray-100 p-6 rounded-lg shadow-lg">
           <h1 className="text-4xl font-bold text-center capitalize">

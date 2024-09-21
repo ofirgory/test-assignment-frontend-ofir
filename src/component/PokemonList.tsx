@@ -7,19 +7,22 @@ import { PokemonListItem } from "../types";
 const inMemoryCache: { [key: string]: PokemonListItem[] } = {};
 
 const PokemonList: React.FC = () => {
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
   const initialPage = parseInt(searchParams.get("page") || "1", 10);
-
   const [pokemonList, setPokemonList] = useState<PokemonListItem[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [page, setPage] = useState<number>(initialPage);
   const [limit] = useState<number>(20);
 
+  const updatePage = (newPage: number) => {
+    setPage(newPage);
+    setSearchParams({ page: newPage.toString() });
+  };
+
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
       const cacheKey = `pokemon_list_page_${page}`;
-
       const cachedPokemonList = inMemoryCache[cacheKey];
 
       if (cachedPokemonList) {
@@ -74,9 +77,10 @@ const PokemonList: React.FC = () => {
           </li>
         ))}
       </ul>
+
       <div className="flex justify-center items-center space-x-4 mt-6">
         <button
-          onClick={() => setPage(page - 1)}
+          onClick={() => updatePage(page - 1)}
           disabled={page === 1}
           className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 disabled:bg-gray-400"
         >
@@ -84,7 +88,7 @@ const PokemonList: React.FC = () => {
         </button>
         <span className="text-lg">Page {page}</span>
         <button
-          onClick={() => setPage(page + 1)}
+          onClick={() => updatePage(page + 1)}
           className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
         >
           Next
