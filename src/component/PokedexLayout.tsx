@@ -15,7 +15,7 @@ const PokedexLayout: React.FC = () => {
 
         <div className="absolute top-16 left-1/2 transform -translate-x-1/2 text-center">
           <img
-            src="/public/International_Pokémon_logo.svg.png"
+            src="/International_Pokémon_logo.svg.png"
             alt="Pokémon Logo"
             className="w-32 mx-auto"
           />
