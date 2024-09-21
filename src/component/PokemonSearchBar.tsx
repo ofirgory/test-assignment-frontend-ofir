@@ -66,7 +66,7 @@ const PokemonSearchBar: React.FC = () => {
   return (
     <div className="relative">
       <input
-        type="text"
+        type="search"
         placeholder="Search Pokémon..."
         value={searchTerm}
         onChange={handleInputChange}
