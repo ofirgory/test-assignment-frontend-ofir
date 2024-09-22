@@ -1,5 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import { FaArrowRight } from "react-icons/fa";
 
 const PokedexLayout: React.FC = () => {
   return (
@@ -30,9 +31,11 @@ const PokedexLayout: React.FC = () => {
           </p>
         </div>
 
-        <div className="absolute bottom-6 right-4">
+        <div className="absolute bottom-4 right-4">
           <Link to="/pokemon-list">
-            <button className="w-8 h-8 bg-blue-400 text-black font-bold rounded-full hover:bg-yellow-500 transition flex justify-center items-center"></button>
+            <button className="w-10 h-10 bg-blue-500 text-white font-bold rounded-full hover:bg-yellow-400 transition duration-300 ease-in-out transform hover:scale-110 flex items-center justify-center shadow-lg">
+              <FaArrowRight className="text-xl" />
+            </button>
           </Link>
         </div>
       </div>
